@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'todos',
 
     #third party apps
+    'drf_yasg',
     'corsheaders',
     'django_filters',
     'rest_framework',
