@@ -5,16 +5,16 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-7w177u24h$t0s_8h*ksy_&p=)y^ewgr+h$tu-o*-)7u$fi6(z7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+if DEBUG == False:
+    ALLOWED_HOSTS = [
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+    ]
 
 
 
@@ -29,8 +29,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
+    # local apps
+    'authentication',
+    'todos',
+
+    #third party apps
     'corsheaders',
+    'django_filters',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -49,12 +56,11 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
 
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        #'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'authentication.jwt.JWTAuthentication',
     ],
-    
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
-    ],
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 12,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -155,3 +161,4 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'authentication.User'
