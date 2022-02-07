@@ -1,2 +1,3 @@
 # django-rest-api
-Developing endpoints and rest APIs with django rest framework that performs the CRUD operations including AUTH and JWT token authentications.
+- Developing Todo API endpoints with django rest framework that performs the CRUD operations.
+- Security is based on default and jwt token authentication.
