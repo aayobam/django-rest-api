@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import django_heroku
 import os
 
 
@@ -221,3 +222,5 @@ LOGGING = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentication.User'
+
+django_heroku.settings(locals())
