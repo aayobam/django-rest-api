@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 import django_heroku
+import environ
 import os
 
 
@@ -8,8 +9,12 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+env = environ.Env()
+environ.Env.read_env()
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7w177u24h$t0s_8h*ksy_&p=)y^ewgr+h$tu-o*-)7u$fi6(z7'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
