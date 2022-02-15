@@ -19,9 +19,11 @@ class TodoApiView(ListCreateAPIView):
     search_fields = ['id', 'title', 'is_completed']
     ordering_fields = ['id', 'title', 'is_completed']
 
-    def get_queryset(self, request):
+    def get_queryset(self):
         user = self.request.user
         todo_list = Todo.objects.filter(owner=user)
+        if not user.is_authenticated:
+            return Response({"message": "Login is required"}, status=status.HTTP_401_UNAUTHORIZED)
         return todo_list
 
     def perform_create(self, request):
@@ -43,7 +45,7 @@ class TodoApiView(ListCreateAPIView):
 
 class TodoDetailApiView(RetrieveUpdateDestroyAPIView):
     serializer_class = TodoSerializer
-    permission_class = [IsAuthenticated, ]
+    permission_class = [IsAuthenticated,]
     lookup_field = "id"
 
     def get_queryset(self, request):

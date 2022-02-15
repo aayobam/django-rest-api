@@ -4,8 +4,7 @@ from .views import TodoApiView, TodoDetailApiView
 
 
 urlpatterns = [
-    path('', TodoApiView.as_view(), name="create-todo"),
-    path('<str:id>', TodoDetailApiView.as_view(), name="todo-detail"),
-
+    path('all', TodoApiView.as_view(), name="create-todo"),
+    path('<uuid:todo_id>', TodoDetailApiView.as_view(), name="todo-detail"),
 ]
    

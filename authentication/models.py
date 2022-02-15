@@ -1,3 +1,4 @@
+from uuid import uuid4
 import jwt
 from django.db import models
 from django.conf import settings
@@ -56,6 +57,7 @@ class MyUserManager(UserManager):
         
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     username = models.CharField(
         _('username'), 
         max_length=50,
@@ -91,11 +93,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-
-    @property
-    def token(self):
-        user_toke = jwt.decode({"email": self.email, "username": self.username,"exp": datetime.utcnow() + timedelta(hours=10)},
-        settings.SECRET_KEY,
-        algorithm="HS256",
-        )
-        return user_toke
