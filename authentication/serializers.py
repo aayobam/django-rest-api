@@ -1,7 +1,9 @@
 from xml.dom.minidom import Attr
 from rest_framework import serializers
 from .models import User
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import User
 
 
 
@@ -31,27 +33,30 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
 
-    def delete(self, instance, validated_data):
-        for key, value in validated_data.items():
-            return Attr(key, value, instance)
-
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
-            return(instance, key, value)
+            return (instance, key, value)
 
 
-class LogoutSerializer(serializers.Serializer):
-    """
-    The refresh tokens created when users signin are blacklisted after logging out
-    Simple JWT blacklist option does this so the refresh tokens can't be used again
-    """
+class EmailTokenObtainSerializer(TokenObtainPairSerializer):
+    username_field = User.EMAIL_FIELD
 
-    def validate(self, validated_data):
-        self.token = validated_data["refresh"]
-        return validated_data
 
-    def save(self, **kwargs):
-        try:
-            RefreshToken(self.token).blacklist()
-        except TokenError:
-            self.fail("bad_token")
+class CustomTokenObtainPairSerializer(EmailTokenObtainSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = RefreshToken.for_user(user)
+        token["email"] = user.email
+        token["username"] = user.username
+        token["password"] = user.password
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        user = UserSerializer(self.user)
+        data["user"] = user.data
+        return data

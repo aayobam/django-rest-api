@@ -3,16 +3,16 @@ from .serializers import *
 from .models import User
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework import generics
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from django.contrib.auth import logout
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 
 
-class RegisterUserApiView(GenericAPIView):
+
+
+class RegisterUserApiView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
 
@@ -24,39 +24,41 @@ class RegisterUserApiView(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenPairObtainView(TokenObtainPairView):
 
-    """
-        Generates token for logged in users
-    """
-    @classmethod
-    def get_token(self, user):
-        token = super().get_token(user)
-        token["username"] = user.username
-        token["email"] = user.email
-        token["password"] = user.password
-        return token
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-    
+    def post(self, request, *args, **kwargs):
+        payload = request.data
+        serializer = CustomTokenObtainPairSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        response_data = serializer.validated_data
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-class LoggedInUsersView(GenericAPIView):
+
+class UsersListView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated,]
 
-    def get(self, request):
+
+    def get_queryset(self):
+        users_list = User.objects.all()
+        return users_list
+
+    def get(self, request, *args, **kwargs):
 
         """
-            Fetches all logged in users
+        Fetches all users
+        Only a super user or admin has the permission to view all users details
         """
-        user = request.user
-        serializer = RegisterSerializer(user)
-        return Response({"user":serializer.data}, status=status.HTTP_200_OK)
+        user = self.request.user
+        if not user.is_superuser:
+            return Response({"detail": "You are not authorized to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = UserSerializer(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserAPIView(RetrieveUpdateDestroyAPIView):
+class UserAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_class = [permissions.IsAuthenticated,]
@@ -99,6 +101,7 @@ class UserAPIView(RetrieveUpdateDestroyAPIView):
         }
         serializer = self.serializer_class(data=payload, format="json")
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response({"success":True, "deta": serializer.data}, status=status.HTTP_200_OK)
     
     """
@@ -114,12 +117,8 @@ class UserAPIView(RetrieveUpdateDestroyAPIView):
         return Response({"success":True, "details": "data deleted"}, status=status.HTTP_200_OK)
 
 
-
-
-class LogOutApiView(GenericAPIView):
-
-    serializer_class = LogoutSerializer
-    permission_classes = [permissions.IsAuthenticated,]
+class LogOutApiView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny, ]
 
     def logout(self, request):
         user = request.user
