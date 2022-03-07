@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # local apps
-    'authentication',
-    'todos',
+    'apps.authentication',
+    'apps.todos',
 
     #third party apps
     'drf_yasg',
@@ -73,7 +73,7 @@ REST_FRAMEWORK = {
     ],
     
     "DEFAULT_PERMISSION_CLASS":[
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
@@ -82,7 +82,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -242,6 +242,6 @@ LOGGING = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'authentication.CustomUser'
 
 django_heroku.settings(locals())

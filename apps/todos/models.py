@@ -1,5 +1,6 @@
+from tabnanny import verbose
 from django.db import models
-from authentication.models import User
+from apps.authentication.models import CustomUser
 from uuid import uuid4
 
 
@@ -10,13 +11,14 @@ class Todo(models.Model):
     title = models.CharField(max_length=100)
     desc = models.TextField()
     is_completed = models.BooleanField(default=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        verbose_name = "Todo"
+        verbose_name_plural = "Todos"
         ordering = ('-created_at',)
-    
 
     def __str__(self):
         return self.title
