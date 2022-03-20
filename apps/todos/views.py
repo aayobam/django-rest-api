@@ -16,7 +16,7 @@ class TodoCreateApiView(generics.CreateAPIView):
     """
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    permission_class = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     pagination_class = CustomPageNUmberPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
@@ -36,7 +36,7 @@ class TodoListApiView(generics.ListAPIView):
     """
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    permission_class = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     pagination_class = CustomPageNUmberPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['title']
@@ -57,7 +57,7 @@ class TodoDetailApiView(generics.RetrieveAPIView):
     """
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    permission_class = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = "id"
     lookup_url_kwarg = "todo_id"
 
@@ -76,7 +76,7 @@ class TodoUpdateApiView(generics.RetrieveUpdateAPIView):
     """
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    permission_class = [IsAuthenticated, HasTodoPermissionOrReadOnly]
+    permission_classes = [IsAuthenticated, HasTodoPermissionOrReadOnly]
     lookup_field = "id"
     lookup_url_kwarg = "todo_id"
 
@@ -101,7 +101,7 @@ class TodoDeleteApiView(generics.DestroyAPIView):
     """
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    permission_class = [IsAuthenticated, HasTodoPermissionOrReadOnly]
+    permission_classes = [IsAuthenticated, HasTodoPermissionOrReadOnly]
     lookup_field = "id"
     lookup_url_kwarg = "todo_id"
 
