@@ -40,3 +40,15 @@ docker-compose down
 ```
 docker-compose exec app pytest
 ```
+- To check logs, type the bew
+```
+docker-compose logs -f
+```
+
+- To drop and rebuild database, type the following commands
+```
+docker-compose down -v --remove-orphans
+```
+```
+docker-compose up --build -d
+```
