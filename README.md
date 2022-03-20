@@ -15,12 +15,28 @@
 
 ## To work on this project:
 
-- Fork the repo
-- Clone the repo to your system
+- Fork the repo to your repo
+- Clone the repo to your system with the below command
+```
+git clone "repo link"
+```
 
 ## Installation instructions for backend
 
 - Make sure docker and docker-compose are installed on your system (linux/mac/windows10>>).
+- After cloning the repository to your system, type the below to build the database and install all dependencies.
 ```
 docker-compose up --build -d
+```
+- To run the project type the below command
+```
+docker-compose up
+```
+- To stop the project, type the below command
+```
+docker-compose down
+```
+- To run pytest, type the below command
+```
+docker-compose exec app pytest
 ```
